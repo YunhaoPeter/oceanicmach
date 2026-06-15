@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}部门管理 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">部门管理</h2>
+  <a href="/departments/new" class="btn btn-primary">+ 新增部门</a>
+</div>
+
+<form method="get" style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end;">
+  <div class="form-group" style="margin-bottom:0;">
+    <label>搜索</label>
+    <input type="text" name="search" value="{{ search }}" placeholder="部门名称" style="width:200px;">
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>状态</label>
+    <select name="status" style="width:110px;">
+      <option value="">全部</option>
+      <option value="启用" {% if status=="启用" %}selected{% endif %}>启用</option>
+      <option value="禁用" {% if status=="禁用" %}selected{% endif %}>禁用</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<table>
+  <thead>
+    <tr><th>部门名称</th><th>编码</th><th>负责人</th><th>状态</th><th style="width:180px;">操作</th></tr>
+  </thead>
+  <tbody>
+    {% for d in departments %}
+    <tr>
+      <td>
+        {% for _ in range(d._level) %}&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}
+        {% if d._level > 0 %}└ {% endif %}{{ d.name }}
+      </td>
+      <td>{{ d.department_code }}</td>
+      <td>{{ d.manager.name if d.manager else "-" }}</td>
+      <td>{{ d.status }}</td>
+      <td>
+        <a href="/departments/{{ d.id }}/edit" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">编辑</a>
+        <a href="/departments/{{ d.id }}/roles" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">角色</a>
+        <a href="/departments/{{ d.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if departments|length == 0 %}
+    <tr><td colspan="5" style="text-align:center;color:#999;">暂无部门数据，请先新增</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+{% endblock %}

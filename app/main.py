@@ -5,6 +5,7 @@ from app.database import engine, Base
 import app.models  # noqa: ensure all model tables are created on startup
 from app.routers import products
 from app.routers import entities
+from app.routers import departments
 
 app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
 
@@ -12,6 +13,7 @@ app.mount("/static", StaticFiles(directory=settings.STATIC_DIR), name="static")
 
 app.include_router(products.router)
 app.include_router(entities.router)
+app.include_router(departments.router)
 
 @app.on_event("startup")
 def on_startup():

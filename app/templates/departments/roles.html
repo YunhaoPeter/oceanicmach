@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ department.name }} - 岗位角色 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">{{ department.name }} — 岗位角色</h2>
+  <a href="/departments" class="btn" style="background:#e2e8f0;color:#4a5568;">← 返回部门列表</a>
+</div>
+
+<form method="post" action="/departments/{{ department.id }}/roles/save" style="background:#fff;padding:16px;border-radius:6px;margin-bottom:20px;">
+  <h3 style="font-size:16px;margin-bottom:14px;">新增角色</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;">
+    <div class="form-group" style="margin-bottom:0;">
+      <label>角色编码</label>
+      <input type="text" name="role_code" required>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>角色名称</label>
+      <input type="text" name="name" required>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>描述</label>
+      <input type="text" name="description">
+    </div>
+    <button type="submit" class="btn btn-primary" style="height:38px;">保存</button>
+  </div>
+</form>
+
+<table>
+  <thead>
+    <tr><th>角色编码</th><th>角色名称</th><th>描述</th><th>状态</th><th style="width:60px;">操作</th></tr>
+  </thead>
+  <tbody>
+    {% for r in roles %}
+    <tr>
+      <td>{{ r.role_code }}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.description or "-" }}</td>
+      <td>{{ r.status }}</td>
+      <td>
+        <a href="/departments/{{ department.id }}/roles/{{ r.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if roles|length == 0 %}
+    <tr><td colspan="5" style="text-align:center;color:#999;">暂未设置角色</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+{% endblock %}
