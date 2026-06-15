@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{% if employee %}编辑员工{% else %}新增员工{% endif %} - Oceanicmach{% endblock %}
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+  <h2 style="font-size:20px;margin-bottom:20px;">{% if employee %}编辑员工{% else %}新增员工{% endif %}</h2>
+  <form method="post" action="/employees/save">
+    {% if employee %}<input type="hidden" name="id" value="{{ employee.id }}">{% endif %}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="form-group"><label>工号 <span style="color:red;">*</span></label><input type="text" name="employee_code" value="{{ employee.employee_code if employee else '' }}" required></div>
+      <div class="form-group"><label>姓名 <span style="color:red;">*</span></label><input type="text" name="name" value="{{ employee.name if employee else '' }}" required></div>
+      <div class="form-group"><label>性别</label><select name="gender"><option value="">请选择</option><option value="男" {% if employee and employee.gender=="男" %}selected{% endif %}>男</option><option value="女" {% if employee and employee.gender=="女" %}selected{% endif %}>女</option></select></div>
+      <div class="form-group"><label>手机号 <span style="color:red;">*</span></label><input type="text" name="phone" value="{{ employee.phone if employee else '' }}" required></div>
+      <div class="form-group"><label>邮箱</label><input type="email" name="email" value="{{ employee.email if employee else '' }}"></div>
+      <div class="form-group"><label>职位</label><input type="text" name="position" value="{{ employee.position if employee else '' }}"></div>
+      <div class="form-group"><label>入职日期</label><input type="date" name="hire_date" value="{{ employee.hire_date if employee else '' }}"></div>
+      <div class="form-group">
+        <label>部门 <span style="color:red;">*</span></label>
+        <select name="department_id" required>
+          <option value="">请选择</option>
+          {% for d in departments %}<option value="{{ d.id }}" {% if employee and employee.department_id==d.id %}selected{% endif %}>{{ d.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>归属主体</label>
+        <select name="company_entity_id">
+          <option value="">请选择</option>
+          {% for e in entities %}<option value="{{ e.id }}" {% if employee and employee.company_entity_id==e.id %}selected{% endif %}>{{ e.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select name="status">
+          {% for s in ["在职","离职","试用期"] %}<option value="{{ s }}" {% if (employee and employee.status==s) or (not employee and s=="在职") %}selected{% endif %}>{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>备注</label><textarea name="remark" rows="3">{{ employee.remark if employee else '' }}</textarea></div>
+    <div style="display:flex;gap:12px;margin-top:20px;"><button type="submit" class="btn btn-primary">保存</button><a href="/employees" class="btn" style="background:#e2e8f0;color:#4a5568;">取消</a></div>
+  </form>
+</div>
+{% endblock %}

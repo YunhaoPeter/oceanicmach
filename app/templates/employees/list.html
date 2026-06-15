@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}员工管理 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">员工管理</h2>
+  <a href="/employees/new" class="btn btn-primary">+ 新增员工</a>
+</div>
+
+<form method="get" style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end;flex-wrap:wrap;">
+  <div class="form-group" style="margin-bottom:0;">
+    <label>搜索</label>
+    <input type="text" name="search" value="{{ search }}" placeholder="工号/姓名" style="width:180px;">
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>部门</label>
+    <select name="department_id" style="width:150px;">
+      <option value="">全部</option>
+      {% for d in departments %}
+      <option value="{{ d.id }}" {% if department_id==d.id|string %}selected{% endif %}>{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>状态</label>
+    <select name="status" style="width:110px;">
+      <option value="">全部</option>
+      {% for s in ["在职","离职","试用期"] %}
+      <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<table>
+  <thead>
+    <tr><th>工号</th><th>姓名</th><th>性别</th><th>部门</th><th>职位</th><th>手机号</th><th>入职日期</th><th>状态</th><th style="width:100px;">操作</th></tr>
+  </thead>
+  <tbody>
+    {% for e in employees %}
+    <tr>
+      <td>{{ e.employee_code }}</td>
+      <td>{{ e.name }}</td>
+      <td>{{ e.gender or "-" }}</td>
+      <td>{{ e.department.name if e.department else "-" }}</td>
+      <td>{{ e.position or "-" }}</td>
+      <td>{{ e.phone }}</td>
+      <td>{{ e.hire_date or "-" }}</td>
+      <td>{{ e.status }}</td>
+      <td>
+        <a href="/employees/{{ e.id }}/edit" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">编辑</a>
+        <a href="/employees/{{ e.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if employees|length == 0 %}
+    <tr><td colspan="9" style="text-align:center;color:#999;">暂无数据</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<div style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+  {% for p in range(1, total_pages+1) %}
+  <a href="?search={{ search }}&department_id={{ department_id }}&status={{ status }}&page={{ p }}" class="btn {% if p==page %}btn-primary{% endif %}" style="min-width:32px;padding:4px 10px;">{{ p }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
