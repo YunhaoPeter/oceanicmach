@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}产品管理 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">产品管理</h2>
+  <a href="/products/new" class="btn btn-primary">+ 新增产品</a>
+</div>
+
+<form class="filter-bar" method="get" style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end;flex-wrap:wrap;">
+  <div class="form-group" style="margin-bottom:0;">
+    <label>搜索</label>
+    <input type="text" name="search" value="{{ search }}" placeholder="编码/名称" style="width:180px;">
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>分类</label>
+    <select name="category" style="width:120px;">
+      <option value="">全部</option>
+      {% for c in ["成品","半成品","原材料","服务"] %}
+      <option value="{{ c }}" {% if category==c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>状态</label>
+    <select name="status" style="width:110px;">
+      <option value="">全部</option>
+      {% for s in ["在售","停产","研发中"] %}
+      <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>编码</th><th>名称</th><th>型号</th><th>分类</th><th>单位</th><th>售价</th><th>税率</th><th>状态</th><th style="width:100px;">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in products %}
+    <tr>
+      <td>{{ p.product_code }}</td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.model or "-" }}</td>
+      <td>{{ p.category }}</td>
+      <td>{{ p.unit }}</td>
+      <td>{% if p.sales_price %}¥{{ "%.2f"|format(p.sales_price) }}{% else %}-{% endif %}</td>
+      <td>{{ p.tax_rate }}%</td>
+      <td>{{ p.status }}</td>
+      <td>
+        <a href="/products/{{ p.id }}/edit" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">编辑</a>
+        <a href="/products/{{ p.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if products|length == 0 %}
+    <tr><td colspan="9" style="text-align:center;color:#999;">暂无数据</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<div style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+  {% for p in range(1, total_pages+1) %}
+  <a href="?search={{ search }}&category={{ category }}&status={{ status }}&page={{ p }}" class="btn {% if p==page %}btn-primary{% endif %}" style="min-width:32px;padding:4px 10px;">{{ p }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

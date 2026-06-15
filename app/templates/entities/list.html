@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}公司主体 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">公司主体</h2>
+  <a href="/company-entities/new" class="btn btn-primary">+ 新增主体</a>
+</div>
+
+<form class="filter-bar" method="get" style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end;">
+  <div class="form-group" style="margin-bottom:0;">
+    <label>搜索</label>
+    <input type="text" name="search" value="{{ search }}" placeholder="编码/名称" style="width:200px;">
+  </div>
+  <div class="form-group" style="margin-bottom:0;">
+    <label>状态</label>
+    <select name="status" style="width:110px;">
+      <option value="">全部</option>
+      {% for s in ["启用","禁用"] %}
+      <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>编码</th><th>全称</th><th>简称</th><th>类型</th><th>法定代表人</th><th>联系电话</th><th>状态</th><th style="width:100px;">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in entities %}
+    <tr>
+      <td>{{ e.entity_code }}</td>
+      <td>{{ e.name }}</td>
+      <td>{{ e.short_name or "-" }}</td>
+      <td>{{ e.entity_type }}</td>
+      <td>{{ e.legal_representative or "-" }}</td>
+      <td>{{ e.contact_phone or "-" }}</td>
+      <td>{{ e.status }}</td>
+      <td>
+        <a href="/company-entities/{{ e.id }}/edit" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">编辑</a>
+        <a href="/company-entities/{{ e.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if entities|length == 0 %}
+    <tr><td colspan="8" style="text-align:center;color:#999;">暂无数据</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<div style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+  {% for p in range(1, total_pages+1) %}
+  <a href="?search={{ search }}&status={{ status }}&page={{ p }}" class="btn {% if p==page %}btn-primary{% endif %}" style="min-width:32px;padding:4px 10px;">{{ p }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

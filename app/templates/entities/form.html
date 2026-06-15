@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{% if entity %}编辑主体{% else %}新增主体{% endif %} - Oceanicmach{% endblock %}
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+  <h2 style="font-size:20px;margin-bottom:20px;">{% if entity %}编辑主体{% else %}新增主体{% endif %}</h2>
+  <form method="post" action="/company-entities/save">
+    {% if entity %}<input type="hidden" name="id" value="{{ entity.id }}">{% endif %}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="form-group">
+        <label>主体编码 <span style="color:red;">*</span></label>
+        <input type="text" name="entity_code" value="{{ entity.entity_code if entity else '' }}" required>
+      </div>
+      <div class="form-group">
+        <label>主体全称 <span style="color:red;">*</span></label>
+        <input type="text" name="name" value="{{ entity.name if entity else '' }}" required>
+      </div>
+      <div class="form-group">
+        <label>简称</label>
+        <input type="text" name="short_name" value="{{ entity.short_name if entity else '' }}">
+      </div>
+      <div class="form-group">
+        <label>统一社会信用代码</label>
+        <input type="text" name="credit_code" value="{{ entity.credit_code if entity else '' }}">
+      </div>
+      <div class="form-group">
+        <label>法定代表人</label>
+        <input type="text" name="legal_representative" value="{{ entity.legal_representative if entity else '' }}">
+      </div>
+      <div class="form-group">
+        <label>联系电话</label>
+        <input type="text" name="contact_phone" value="{{ entity.contact_phone if entity else '' }}">
+      </div>
+      <div class="form-group">
+        <label>主体类型 <span style="color:red;">*</span></label>
+        <select name="entity_type" required>
+          <option value="">请选择</option>
+          {% for t in ["母公司","子公司","分公司","办事处"] %}
+          <option value="{{ t }}" {% if entity and entity.entity_type==t %}selected{% endif %}>{{ t }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select name="status">
+          {% for s in ["启用","禁用"] %}
+          <option value="{{ s }}" {% if (entity and entity.status==s) or s=="启用" %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>注册地址</label>
+      <input type="text" name="registered_address" value="{{ entity.registered_address if entity else '' }}">
+    </div>
+    <div class="form-group">
+      <label>备注</label>
+      <textarea name="remark" rows="3">{{ entity.remark if entity else '' }}</textarea>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:20px;">
+      <button type="submit" class="btn btn-primary">保存</button>
+      <a href="/company-entities" class="btn" style="background:#e2e8f0;color:#4a5568;">取消</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
