@@ -7,6 +7,7 @@ from app.routers import products
 from app.routers import entities
 from app.routers import departments
 from app.routers import employees
+from app.routers import customers
 
 app = FastAPI(title=settings.APP_NAME, version=settings.APP_VERSION)
 
@@ -16,6 +17,7 @@ app.include_router(products.router)
 app.include_router(entities.router)
 app.include_router(departments.router)
 app.include_router(employees.router)
+app.include_router(customers.router)
 
 @app.on_event("startup")
 def on_startup():

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}客户管理 - Oceanicmach{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h2 style="font-size:20px;">客户管理</h2>
+  <a href="/customers/new" class="btn btn-primary">+ 新增客户</a>
+</div>
+
+<form method="get" style="display:flex;gap:12px;margin-bottom:16px;align-items:flex-end;flex-wrap:wrap;">
+  <div class="form-group" style="margin-bottom:0;"><label>搜索</label><input type="text" name="search" value="{{ search }}" placeholder="编码/名称" style="width:200px;"></div>
+  <div class="form-group" style="margin-bottom:0;"><label>类型</label><select name="customer_type" style="width:120px;"><option value="">全部</option>{% for t in ["企业客户","个人客户"] %}<option value="{{ t }}" {% if customer_type==t %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></div>
+  <div class="form-group" style="margin-bottom:0;"><label>状态</label><select name="status" style="width:110px;"><option value="">全部</option>{% for s in ["潜在","活跃","休眠","黑名单"] %}<option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<table>
+  <thead><tr><th>编码</th><th>名称</th><th>类型</th><th>等级</th><th>行业</th><th>来源</th><th>状态</th><th style="width:100px;">操作</th></tr></thead>
+  <tbody>
+    {% for c in customers %}
+    <tr>
+      <td><a href="/customers/{{ c.id }}">{{ c.customer_code }}</a></td>
+      <td>{{ c.name }}</td><td>{{ c.customer_type }}</td><td>{{ c.customer_level }}</td>
+      <td>{{ c.industry or "-" }}</td><td>{{ c.source or "-" }}</td><td>{{ c.status }}</td>
+      <td>
+        <a href="/customers/{{ c.id }}/edit" class="btn btn-primary" style="padding:3px 10px;font-size:12px;">编辑</a>
+        <a href="/customers/{{ c.id }}/delete" class="btn btn-danger" style="padding:3px 10px;font-size:12px;" onclick="return confirm('确认删除？')">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+    {% if customers|length == 0 %}<tr><td colspan="8" style="text-align:center;color:#999;">暂无数据</td></tr>{% endif %}
+  </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<div style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+  {% for p in range(1, total_pages+1) %}<a href="?search={{ search }}&customer_type={{ customer_type }}&status={{ status }}&page={{ p }}" class="btn {% if p==page %}btn-primary{% endif %}" style="min-width:32px;padding:4px 10px;">{{ p }}</a>{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

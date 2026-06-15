@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if customer %}编辑客户{% else %}新增客户{% endif %} - Oceanicmach{% endblock %}
+{% block content %}
+<div style="max-width:640px;margin:0 auto;">
+  <h2 style="font-size:20px;margin-bottom:20px;">{% if customer %}编辑客户{% else %}新增客户{% endif %}</h2>
+  <form method="post" action="/customers/save">
+    {% if customer %}<input type="hidden" name="id" value="{{ customer.id }}">{% endif %}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="form-group"><label>客户编号 <span style="color:red;">*</span></label><input type="text" name="customer_code" value="{{ customer.customer_code if customer else '' }}" required></div>
+      <div class="form-group"><label>客户名称 <span style="color:red;">*</span></label><input type="text" name="name" value="{{ customer.name if customer else '' }}" required></div>
+      <div class="form-group"><label>简称</label><input type="text" name="short_name" value="{{ customer.short_name if customer else '' }}"></div>
+      <div class="form-group"><label>客户类型 <span style="color:red;">*</span></label><select name="customer_type" required><option value="">请选择</option>{% for t in ["企业客户","个人客户"] %}<option value="{{ t }}" {% if customer and customer.customer_type==t %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></div>
+      <div class="form-group"><label>信用代码</label><input type="text" name="credit_code" value="{{ customer.credit_code if customer else '' }}"></div>
+      <div class="form-group"><label>所属行业</label><input type="text" name="industry" value="{{ customer.industry if customer else '' }}"></div>
+      <div class="form-group"><label>客户等级</label><select name="customer_level">{% for l in ["A","B","C","D"] %}<option value="{{ l }}" {% if (customer and customer.customer_level==l) or (not customer and l=="B") %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>
+      <div class="form-group"><label>客户来源</label><select name="source"><option value="">请选择</option>{% for s in ["官网","展会","转介绍","自主开发"] %}<option value="{{ s }}" {% if customer and customer.source==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+      <div class="form-group"><label>状态</label><select name="status">{% for s in ["潜在","活跃","休眠","黑名单"] %}<option value="{{ s }}" {% if (customer and customer.status==s) or (not customer and s=="潜在") %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="form-group"><label>备注</label><textarea name="remark" rows="3">{{ customer.remark if customer else '' }}</textarea></div>
+    <div style="display:flex;gap:12px;margin-top:20px;"><button type="submit" class="btn btn-primary">保存</button><a href="/customers" class="btn" style="background:#e2e8f0;color:#4a5568;">取消</a></div>
+  </form>
+</div>
+{% endblock %}
