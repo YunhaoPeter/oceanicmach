@@ -97,3 +97,70 @@ curl -s http://127.0.0.1:8000/health  # 验证恢复
 - 数据库密码不入库（已在 .gitignore）
 - systemd 环境变量存放 ECS 端配置
 - ECS root 密码、GitHub Token：不要写进任何项目文件
+
+
+## 实体变更治理规则
+
+本规则约束所有涉及实体表（Model）、数据库字段、值集（SAEnum）的变更。
+
+### 实体清单
+
+项目维护两份实体清单作为基线：
+- `docs/entity-inventory.json` — 机器可读的结构化 JSON，供程序化比对
+- `docs/entity-inventory.md` — 人工可读的 Markdown 表格
+
+清单内容包含：实体名称、字段清单、值集定义、关联关系、路由路径、模板路径。
+
+### 变更前置流程
+
+任何涉及以下内容的修改，执行前必须先暂停并执行本流程：
+1. 新增/删除实体表
+2. 新增/修改/删除字段（含字段名、类型、约束、默认值、枚举值）
+3. 修改值集（SAEnum 的名称或选项值）
+4. 修改实体间的关联关系（外键）
+
+流程步骤（由 AI 代理执行）：
+
+**Step 1 — 读取基线**
+读取 `docs/entity-inventory.json` 和 `docs/entity-inventory.md`，了解当前设计状态。
+
+**Step 2 — 识别改动范围**
+按以下维度总结所有改动：
+- 新增/删除实体
+- 新增/修改/删除字段（字段名、类型、约束、枚举值）
+- 修改值集
+- 修改关联关系
+
+**Step 3 — 遍历代码识别影响范围**
+扫查以下路径，定位因实体变更需要同步修改的代码点：
+- `app/models.py` — SQLAlchemy Model 定义
+- `app/routers/*.py` — CRUD 路由（Form 参数、查询过滤字段、页面渲染字段、排序）
+- `app/templates/*.html` 及 `app/templates/**/*.html` — Jinja2 模板中引用的字段名
+- `app/database.py` — 数据库连接配置
+- `app/main.py` — 应用入口（Router 注册）
+- `docs/entity-inventory.json` — 实体清单 JSON
+- `docs/entity-inventory.md` — 实体清单 Markdown
+
+**Step 4 — 向用户报告并征得许可**
+汇总 Step 2 + Step 3 的结果，向用户提交以下信息并获得明确确认后方可执行：
+- 改动内容（增/删/改了哪些字段或实体）
+- 确认是否需要备份生产数据库
+- 遍历后发现的需要同步修改的文件清单
+- 风险评估（如生产 MySQL 字段变更需手动 SQL）
+
+**Step 5 — 执行修改后同步更新基线**
+完成代码修改后，同步更新两个实体清单文件，提交时一同入库。
+
+### 扫描范围路径
+
+执行影响范围分析时，必须覆盖以下文件模式：
+```
+app/models.py
+app/routers/*.py
+app/templates/*.html
+app/templates/**/*.html
+app/database.py
+app/main.py
+docs/entity-inventory.json
+docs/entity-inventory.md
+```

@@ -1,0 +1,218 @@
+{
+  "$schema": "entity-inventory-v1",
+  "version": "1.0.0",
+  "updated_at": "2026-06-28",
+  "summary": {
+    "entity_count": 8,
+    "value_set_count": 13,
+    "note": "当前为主数据框架阶段，所有业务编码字段的生成规则待定义；外键均未配置级联删除策略。"
+  },
+  "value_sets": [
+    {"code": "entity_type_enum", "description": "公司主体类型", "values": ["母公司", "子公司", "分公司", "办事处"]},
+    {"code": "entity_status_enum", "description": "公司主体状态", "values": ["启用", "禁用"]},
+    {"code": "product_category_enum", "description": "产品分类", "values": ["成品", "半成品", "原材料", "服务"]},
+    {"code": "product_unit_enum", "description": "计量单位", "values": ["个", "台", "套", "件", "m", "t", "L"]},
+    {"code": "product_status_enum", "description": "产品状态", "values": ["在售", "停产", "研发中"]},
+    {"code": "dept_status_enum", "description": "部门状态", "values": ["启用", "禁用"]},
+    {"code": "role_status_enum", "description": "角色状态", "values": ["启用", "禁用"]},
+    {"code": "gender_enum", "description": "性别", "values": ["男", "女"]},
+    {"code": "employee_status_enum", "description": "员工状态", "values": ["在职", "离职", "试用期"]},
+    {"code": "customer_type_enum", "description": "客户类型", "values": ["企业客户", "个人客户"]},
+    {"code": "customer_level_enum", "description": "客户等级", "values": ["A", "B", "C", "D"]},
+    {"code": "customer_status_enum", "description": "客户状态", "values": ["潜在", "活跃", "休眠", "黑名单"]},
+    {"code": "customer_source_enum", "description": "客户来源", "values": ["官网", "展会", "转介绍", "自主开发"]}
+  ],
+  "entities": [
+    {
+      "name_cn": "公司主体", "name_en": "CompanyEntity", "table_name": "company_entities",
+      "description": "公司法人主体信息，作为内部管理链路顶层，被部门和员工引用",
+      "model_path": "app/models.py", "module": "Phase 1",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "entity_code", "name_cn": "主体编码", "name_en": "Entity Code", "description_biz": "公司主体业务编号，用于跨系统引用", "description_tech": "唯一约束 String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "COM-001"},
+        {"name": "name", "name_cn": "主体全称", "name_en": "Full Name", "description_biz": "公司法定全称", "description_tech": "", "type": "String(200)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "海洋机械制造有限公司"},
+        {"name": "short_name", "name_cn": "简称", "name_en": "Short Name", "description_biz": "公司日常使用简称", "description_tech": "", "type": "String(100)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "海洋机械"},
+        {"name": "credit_code", "name_cn": "统一社会信用代码", "name_en": "Unified Social Credit Code", "description_biz": "营业执照登记的18位信用代码", "description_tech": "", "type": "String(18)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "91310115MA1H123456"},
+        {"name": "legal_representative", "name_cn": "法定代表人", "name_en": "Legal Representative", "description_biz": "企业法人姓名", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "张三"},
+        {"name": "registered_address", "name_cn": "注册地址", "name_en": "Registered Address", "description_biz": "营业执照注册地址", "description_tech": "", "type": "String(300)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "上海市浦东新区XX路1号"},
+        {"name": "contact_phone", "name_cn": "联系电话", "name_en": "Contact Phone", "description_biz": "公司对外联系电话", "description_tech": "", "type": "String(20)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "021-12345678"},
+        {"name": "entity_type", "name_cn": "主体类型", "name_en": "Entity Type", "description_biz": "公司主体法律组织形态分类", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": true, "is_enum": true, "enum_code": "entity_type_enum", "is_pk": false, "sample": "母公司"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "控制主体是否启用", "description_tech": "SAEnum枚举列，默认启用", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "entity_status_enum", "is_pk": false, "sample": "启用"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "集团总部"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "has_many", "target": "Department", "via": "company_entity_id", "description": "一个公司主体下有多个部门"},
+        {"type": "has_many", "target": "Employee", "via": "company_entity_id", "description": "一个公司主体下有多个员工"}
+      ]
+    },
+    {
+      "name_cn": "产品", "name_en": "Product", "table_name": "products",
+      "description": "产品主数据，独立于组织架构，为后续报价单、订单等提供物料基础",
+      "model_path": "app/models.py", "module": "Phase 1",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "product_code", "name_cn": "产品编码", "name_en": "Product Code", "description_biz": "产品唯一业务编号", "description_tech": "唯一约束String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "PROD-001"},
+        {"name": "name", "name_cn": "产品名称", "name_en": "Product Name", "description_biz": "产品品名全称", "description_tech": "", "type": "String(200)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "数控机床X200"},
+        {"name": "model", "name_cn": "产品型号", "name_en": "Model", "description_biz": "产品规格型号", "description_tech": "", "type": "String(100)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "X200-A"},
+        {"name": "category", "name_cn": "产品分类", "name_en": "Category", "description_biz": "产品所属业务类别，影响库存核算方式", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": true, "is_enum": true, "enum_code": "product_category_enum", "is_pk": false, "sample": "成品"},
+        {"name": "specification", "name_cn": "规格描述", "name_en": "Specification", "description_biz": "产品详细规格参数说明", "description_tech": "", "type": "String(200)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2000x1000x800mm"},
+        {"name": "unit", "name_cn": "计量单位", "name_en": "Unit of Measure", "description_biz": "产品出入库计量基本单位", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": true, "is_enum": true, "enum_code": "product_unit_enum", "is_pk": false, "sample": "台"},
+        {"name": "sales_price", "name_cn": "标准售价", "name_en": "Standard Sales Price", "description_biz": "对外标准销售单价", "description_tech": "Numeric(12,2)", "type": "Numeric(12,2)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "150000.00"},
+        {"name": "cost_price", "name_cn": "成本价", "name_en": "Cost Price", "description_biz": "产品核算成本单价", "description_tech": "Numeric(12,2)", "type": "Numeric(12,2)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "120000.00"},
+        {"name": "tax_rate", "name_cn": "税率(%)", "name_en": "Tax Rate (%)", "description_biz": "适用增值税税率", "description_tech": "Numeric(4,2)，默认13.00", "type": "Numeric(4,2)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "13.00"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "产品销售生命周期阶段", "description_tech": "SAEnum枚举列，默认在售", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "product_status_enum", "is_pk": false, "sample": "在售"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "主力机型"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": []
+    },
+    {
+      "name_cn": "部门", "name_en": "Department", "table_name": "departments",
+      "description": "部门主数据，自引用树形结构(parent_id)，关联公司主体和部门角色/员工",
+      "model_path": "app/models.py", "module": "Phase 2",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "company_entity_id", "name_cn": "归属公司主体", "name_en": "Belonging Company Entity ID", "description_biz": "部门所属的公司法人主体", "description_tech": "外键FK -> company_entities.id", "type": "Integer (FK)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "parent_id", "name_cn": "上级部门", "name_en": "Parent Department ID", "description_biz": "上级部门，实现部门树形层级", "description_tech": "自引用外键FK -> departments.id，null表示顶级", "type": "Integer (FK, self-ref)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": null},
+        {"name": "department_code", "name_cn": "部门编码", "name_en": "Department Code", "description_biz": "部门唯一业务编号", "description_tech": "唯一约束String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "DEPT-001"},
+        {"name": "name", "name_cn": "部门名称", "name_en": "Department Name", "description_biz": "部门中文名称", "description_tech": "", "type": "String(100)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "技术研发部"},
+        {"name": "manager_id", "name_cn": "部门负责人", "name_en": "Department Manager ID", "description_biz": "部门负责人，关联员工表", "description_tech": "外键FK -> employees.id，post_update=True", "type": "Integer (FK)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "3"},
+        {"name": "sort_order", "name_cn": "排序号", "name_en": "Sort Order", "description_biz": "同级部门展示顺序", "description_tech": "Integer，默认0", "type": "Integer", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "控制部门是否启用", "description_tech": "SAEnum枚举列，默认启用", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "dept_status_enum", "is_pk": false, "sample": "启用"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "负责公司核心产品研发"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "belongs_to", "target": "CompanyEntity", "via": "company_entity_id", "description": "部门归属一个公司主体"},
+        {"type": "has_many", "target": "Department", "via": "parent_id", "description": "自引用：一个部门可以有多个下级子部门"},
+        {"type": "belongs_to", "target": "Department (parent)", "via": "parent_id", "description": "自引用：一个部门可以有唯一上级部门"},
+        {"type": "has_many", "target": "DepartmentRole", "via": "department_id", "description": "一个部门下可以有多个角色"},
+        {"type": "has_many", "target": "Employee", "via": "department_id", "description": "一个部门下可以有多个员工"}
+      ]
+    },
+    {
+      "name_cn": "部门角色", "name_en": "DepartmentRole", "table_name": "department_roles",
+      "description": "部门内部角色定义，为后续权限控制预留",
+      "model_path": "app/models.py", "module": "Phase 2",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "department_id", "name_cn": "所属部门", "name_en": "Belonging Department ID", "description_biz": "角色所属的部门", "description_tech": "外键FK -> departments.id", "type": "Integer (FK)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "name", "name_cn": "角色名称", "name_en": "Role Name", "description_biz": "角色中文名称", "description_tech": "", "type": "String(50)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "项目经理"},
+        {"name": "role_code", "name_cn": "角色编码", "name_en": "Role Code", "description_biz": "角色唯一业务编号", "description_tech": "唯一约束String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "ROLE-PM"},
+        {"name": "description", "name_cn": "角色描述", "name_en": "Role Description", "description_biz": "角色职责简要描述", "description_tech": "", "type": "String(200)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "负责项目整体推进与交付"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "控制角色是否启用", "description_tech": "SAEnum枚举列，默认启用", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "role_status_enum", "is_pk": false, "sample": "启用"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "belongs_to", "target": "Department", "via": "department_id", "description": "角色归属一个部门"}
+      ]
+    },
+    {
+      "name_cn": "员工", "name_en": "Employee", "table_name": "employees",
+      "description": "员工主数据，关联部门和公司主体",
+      "model_path": "app/models.py", "module": "Phase 3",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "employee_code", "name_cn": "工号", "name_en": "Employee Code", "description_biz": "员工唯一工号", "description_tech": "唯一约束String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "EMP-001"},
+        {"name": "name", "name_cn": "姓名", "name_en": "Full Name", "description_biz": "员工真实姓名", "description_tech": "", "type": "String(50)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "李四"},
+        {"name": "gender", "name_cn": "性别", "name_en": "Gender", "description_biz": "员工性别", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "gender_enum", "is_pk": false, "sample": "男"},
+        {"name": "phone", "name_cn": "手机号", "name_en": "Phone Number", "description_biz": "员工个人手机号", "description_tech": "", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "13800138000"},
+        {"name": "email", "name_cn": "邮箱", "name_en": "Email", "description_biz": "员工企业或个人邮箱", "description_tech": "", "type": "String(100)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "lisi@oceanicmach.com"},
+        {"name": "department_id", "name_cn": "所属部门", "name_en": "Department ID", "description_biz": "员工当前所属部门", "description_tech": "外键FK -> departments.id", "type": "Integer (FK)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "position", "name_cn": "职位", "name_en": "Position", "description_biz": "员工岗位名称", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "高级工程师"},
+        {"name": "hire_date", "name_cn": "入职日期", "name_en": "Hire Date", "description_biz": "员工首次入职日期", "description_tech": "Date类型", "type": "Date", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2025-03-01"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "员工在职状态", "description_tech": "SAEnum枚举列，默认在职", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "employee_status_enum", "is_pk": false, "sample": "在职"},
+        {"name": "company_entity_id", "name_cn": "归属公司主体", "name_en": "Belonging Company Entity ID", "description_biz": "员工劳动/合同所属的公司法人主体", "description_tech": "外键FK -> company_entities.id", "type": "Integer (FK)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "核心研发人员"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "belongs_to", "target": "Department", "via": "department_id", "description": "员工归属一个部门"},
+        {"type": "belongs_to", "target": "CompanyEntity", "via": "company_entity_id", "description": "员工归属一个公司主体"}
+      ]
+    },
+    {
+      "name_cn": "客户", "name_en": "Customer", "table_name": "customers",
+      "description": "客户主数据，包含联系人、收货地址子表",
+      "model_path": "app/models.py", "module": "Phase 4-5",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "customer_code", "name_cn": "客户编号", "name_en": "Customer Code", "description_biz": "客户唯一业务编号", "description_tech": "唯一约束String(20)，编码规则待定", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "CUST-001"},
+        {"name": "name", "name_cn": "客户全称", "name_en": "Customer Full Name", "description_biz": "客户企业或个人全名", "description_tech": "", "type": "String(200)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "华东钢铁集团"},
+        {"name": "short_name", "name_cn": "客户简称", "name_en": "Short Name", "description_biz": "客户日常称呼简称", "description_tech": "", "type": "String(100)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "华东钢铁"},
+        {"name": "customer_type", "name_cn": "客户类型", "name_en": "Customer Type", "description_biz": "区分企业客户与个人客户", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": true, "is_enum": true, "enum_code": "customer_type_enum", "is_pk": false, "sample": "企业客户"},
+        {"name": "credit_code", "name_cn": "统一社会信用代码", "name_en": "Unified Social Credit Code", "description_biz": "企业客户的18位信用代码", "description_tech": "", "type": "String(18)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "91310115MA1H654321"},
+        {"name": "industry", "name_cn": "所属行业", "name_en": "Industry", "description_biz": "客户所在行业分类", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "钢铁制造"},
+        {"name": "customer_level", "name_cn": "客户等级", "name_en": "Customer Level", "description_biz": "A/B/C/D客户价值评级", "description_tech": "SAEnum枚举列，默认B", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "customer_level_enum", "is_pk": false, "sample": "A"},
+        {"name": "status", "name_cn": "状态", "name_en": "Status", "description_biz": "客户关系生命周期状态", "description_tech": "SAEnum枚举列，默认潜在", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "customer_status_enum", "is_pk": false, "sample": "活跃"},
+        {"name": "source", "name_cn": "客户来源", "name_en": "Customer Source", "description_biz": "客户获取渠道", "description_tech": "SAEnum枚举列", "type": "SAEnum", "required": false, "is_enum": true, "enum_code": "customer_source_enum", "is_pk": false, "sample": "展会"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "年度战略客户"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "has_many", "target": "CustomerContact", "via": "customer_id", "description": "一个客户可以有多个联系人"},
+        {"type": "has_many", "target": "CustomerAddress", "via": "customer_id", "description": "一个客户可以有多个收货地址"}
+      ]
+    },
+    {
+      "name_cn": "客户联系人", "name_en": "CustomerContact", "table_name": "customer_contacts",
+      "description": "客户联系人子表，一个客户下可维护多个联系人",
+      "model_path": "app/models.py", "module": "Phase 4-5",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "customer_id", "name_cn": "所属客户", "name_en": "Belonging Customer ID", "description_biz": "联系人归属的客户", "description_tech": "外键FK -> customers.id", "type": "Integer (FK)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "name", "name_cn": "姓名", "name_en": "Name", "description_biz": "联系人真实姓名", "description_tech": "", "type": "String(50)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "王五"},
+        {"name": "title", "name_cn": "职务", "name_en": "Job Title", "description_biz": "联系人在客户方担任的职务", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "采购经理"},
+        {"name": "phone", "name_cn": "手机号", "name_en": "Phone Number", "description_biz": "联系人手机号", "description_tech": "", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "13900139000"},
+        {"name": "email", "name_cn": "邮箱", "name_en": "Email", "description_biz": "联系人企业邮箱", "description_tech": "", "type": "String(100)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "wangwu@hdsteel.com"},
+        {"name": "is_default", "name_cn": "是否默认联系人", "name_en": "Is Default Contact", "description_biz": "标记是否默认联系人", "description_tech": "Boolean，默认False", "type": "Boolean", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "true"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "负责设备采购决策"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "belongs_to", "target": "Customer", "via": "customer_id", "description": "联系人归属一个客户"}
+      ]
+    },
+    {
+      "name_cn": "客户收货地", "name_en": "CustomerAddress", "table_name": "customer_addresses",
+      "description": "客户收货地址子表，一个客户下可维护多个收货地",
+      "model_path": "app/models.py", "module": "Phase 4-5",
+      "fields": [
+        {"name": "id", "name_cn": "主键ID", "name_en": "Primary Key ID", "description_biz": "记录唯一标识", "description_tech": "自增整数主键", "type": "Integer", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": true, "sample": "1"},
+        {"name": "customer_id", "name_cn": "所属客户", "name_en": "Belonging Customer ID", "description_biz": "收货地址归属的客户", "description_tech": "外键FK -> customers.id", "type": "Integer (FK)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "1"},
+        {"name": "address_name", "name_cn": "地址名称", "name_en": "Address Name", "description_biz": "收货地的业务标识名称", "description_tech": "", "type": "String(100)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "华东钢铁总部仓库"},
+        {"name": "contact_person", "name_cn": "收货联系人", "name_en": "Contact Person", "description_biz": "现场收货对接人姓名", "description_tech": "", "type": "String(50)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "赵六"},
+        {"name": "contact_phone", "name_cn": "联系电话", "name_en": "Contact Phone", "description_biz": "现场收货对接人电话", "description_tech": "", "type": "String(20)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "13700137000"},
+        {"name": "province", "name_cn": "省", "name_en": "Province", "description_biz": "地址所属省份", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "江苏省"},
+        {"name": "city", "name_cn": "市", "name_en": "City", "description_biz": "地址所属城市", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "南京市"},
+        {"name": "district", "name_cn": "区", "name_en": "District", "description_biz": "地址所属区县", "description_tech": "", "type": "String(50)", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "鼓楼区"},
+        {"name": "detail_address", "name_cn": "详细地址", "name_en": "Detailed Address", "description_biz": "街道门牌号等完整详细地址", "description_tech": "", "type": "String(300)", "required": true, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "XX工业园1号门"},
+        {"name": "is_default", "name_cn": "是否默认地址", "name_en": "Is Default Address", "description_biz": "标记是否默认收货地址", "description_tech": "Boolean，默认False", "type": "Boolean", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "true"},
+        {"name": "remark", "name_cn": "备注", "name_en": "Remark", "description_biz": "自由文本备注", "description_tech": "", "type": "Text", "required": false, "is_enum": false, "enum_code": null, "is_pk": false, "sample": "仅限工作日收货"},
+        {"name": "created_at", "name_cn": "创建时间", "name_en": "Created At", "description_biz": "记录创建时间", "description_tech": "TimestampMixin自动填充", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-01-15 10:30:00"},
+        {"name": "updated_at", "name_cn": "更新时间", "name_en": "Updated At", "description_biz": "记录最后更新时间", "description_tech": "TimestampMixin自动刷新", "type": "DateTime", "required": "系统自动", "is_enum": false, "enum_code": null, "is_pk": false, "sample": "2026-06-28 14:00:00"}
+      ],
+      "relationships": [
+        {"type": "belongs_to", "target": "Customer", "via": "customer_id", "description": "收货地址归属一个客户"}
+      ]
+    }
+  ],
+  "scan_paths_for_entity_changes": [
+    "app/models.py",
+    "app/routers/*.py",
+    "app/templates/*.html",
+    "app/templates/**/*.html",
+    "app/database.py",
+    "app/main.py",
+    "docs/entity-inventory.json",
+    "docs/entity-inventory.md"
+  ]
+}
