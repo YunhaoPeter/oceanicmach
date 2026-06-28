@@ -7,3 +7,6 @@ __pycache__/
 .idea/
 .vscode/
 oceanicmach.db
+
+# Codex 智能体本地配置（不入库）
+.agents/

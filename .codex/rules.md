@@ -164,3 +164,12 @@ app/main.py
 docs/entity-inventory.json
 docs/entity-inventory.md
 ```
+
+
+## GitHub 推送
+
+- 推送信息见本地文件 `.agents/github-config.md`（此文件不会被推送至 GitHub）
+- 推送前先读取 `.agents/github-config.md` 获取认证方式和远程仓库配置
+- SSH 密钥位于 `~/.ssh/id_ed25519`，已在 GitHub 注册
+- 远程当前为 HTTPS 协议；如需切换回 SSH 执行：`git remote set-url origin git@github.com:YunhaoPeter/oceanicmach.git`
+- 沙箱环境网络受限时，告知用户手动执行 `git push`
